@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRESS — A Message from the Creator</title>
+<link rel="icon" href="eldoria-icon.jpg">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { overflow: hidden; }
+  .press-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 40px 60px;
+    text-align: center;
+    position: relative;
+  }
+  .press-ember {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .press-ember::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(139,26,26,0.12), transparent 70%);
+  }
+  .press-content { position: relative; z-index: 2; width: 100%; max-width: 960px; }
+
+  .press-title {
+    font-family: var(--font-gothic);
+    font-size: clamp(4rem, 12vw, 9rem);
+    color: var(--gold);
+    text-shadow: var(--glow-gold);
+    line-height: 1;
+    margin-bottom: 6px;
+    animation: fadeSlideUp 1s ease 0.3s both;
+  }
+  .press-ornament {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.6em;
+    color: var(--silver-dark);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    animation: fadeSlideUp 0.8s ease 0.6s both;
+  }
+  .press-quote {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 50px;
+    line-height: 1.9;
+    animation: fadeSlideUp 0.8s ease 0.8s both;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeSlideUp 0.8s ease 1s both;
+  }
+  .video-frame {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--dark-panel);
+    border: 1px solid var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Corner decorations */
+  .video-frame::before, .video-frame::after {
+    content: '';
+    position: absolute;
+    width: 30px; height: 30px;
+    border-color: var(--gold-dark);
+    border-style: solid;
+  }
+  .video-frame::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+  .video-frame::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+  .play-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .play-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--gold-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(200,168,75,0.05);
+  }
+  .play-circle:hover {
+    background: rgba(200,168,75,0.15);
+    border-color: var(--gold);
+    box-shadow: var(--glow-gold);
+    transform: scale(1.1);
+  }
+  .play-label {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .video-note {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    margin-top: 20px;
+    line-height: 2;
+  }
+
+  /* file drop zone */
+  .file-hint {
+    margin-top: 30px;
+    padding: 16px 24px;
+    border: 1px dashed var(--dark-border);
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    line-height: 2;
+  }
+  .file-hint span { color: var(--gold-dim); }
+  @media (max-width:600px) { body { overflow: auto; } }
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.4;"></canvas>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><img src="eldoria-icon.jpg" alt="Eldoria"></a>
+  <ul class="nav-links">
+    <li class="nav-item"><a href="index.html" class="nav-btn" data-page="index.html"><span class="label-main">Eden</span><span class="label-hover">Home</span></a></li>
+    <li class="nav-item"><a href="story.html" class="nav-btn" data-page="story.html"><span class="label-main">The Lore</span><span class="label-hover">Full Story</span></a></li>
+    <li class="nav-item"><a href="updates.html" class="nav-btn" data-page="updates.html"><span class="label-main">Scrolls</span><span class="label-hover">Updates</span></a></li>
+    <li class="nav-item"><a href="guide.html" class="nav-btn" data-page="guide.html"><span class="label-main">Journey</span><span class="label-hover">How to Join</span></a></li>
+    <li class="nav-item"><a href="press.html" class="nav-btn" data-page="press.html"><span class="label-main">PRESS</span><span class="label-hover">Watch</span></a></li>
+    <li class="nav-item social-wrapper">
+      <button class="social-toggle">Realm <span class="arrow">▾</span></button>
+      <div class="social-scroll">
+        <a class="social-link" href="https://discord.gg/yf2Mn4Q7Px" target="_blank"><span class="social-icon">⚔</span> Discord</a>
+        <a class="social-link" href="https://youtube.com/" target="_blank"><span class="social-icon">▶</span> YouTube</a>
+        <a class="social-link" href="https://instagram.com/" target="_blank"><span class="social-icon">✦</span> Instagram</a>
+        <a class="social-link" href="https://facebook.com/" target="_blank"><span class="social-icon">❧</span> Facebook</a>
+        <a class="social-link" href="https://wa.me/" target="_blank"><span class="social-icon">☍</span> WhatsApp</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right"><button class="settings-btn" id="settings-btn">⚙</button></div>
+</nav>
+
+<div id="settings-panel">
+  <div class="settings-header">⚙ &nbsp; Realm Settings</div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="dark">Dark</button>
+      <button class="mode-btn" data-mode="normal">Normal</button>
+      <button class="mode-btn" data-mode="bright">Light</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Sound & Effects</div>
+    <div class="toggle-row"><span class="toggle-label">Background Music</span><label class="toggle-switch"><input type="checkbox" id="music-toggle"><span class="toggle-slider"></span></label></div>
+    <div class="toggle-row"><span class="toggle-label">Floating Particles</span><label class="toggle-switch"><input type="checkbox" id="particles-toggle" checked><span class="toggle-slider"></span></label></div>
+  </div>
+</div>
+
+<div class="press-page">
+  <div class="press-ember"></div>
+  <div class="press-content">
+
+    <h1 class="press-title">A Message</h1>
+    <p class="press-ornament">From the Creator of Eldoria</p>
+
+    <p class="press-quote">
+      "I built this because stories matter. Because worlds matter. And because some things are worth the countless hours it takes to bring them to life."
+    </p>
+
+    <div class="video-wrapper">
+      <div class="video-frame" id="video-frame">
+        <div class="play-btn-wrap" id="play-placeholder">
+          <div class="video-container">
+            <video width="900" height="490" controls>
+              <source src="eldoria-video.mp4" type="video/mp4">
+               Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-note">
+        The video file <span style="color:var(--gold);">eldoria-video.mp4</span> should be placed in the same folder as this website.<br>
+        Click the play button above to watch.
+      </div>
+
+      <div class="file-hint">
+        To use your own video: place <span>eldoria-video.mp4</span> in the website folder.<br>
+        Or place any <span>.mp4 / .webm</span> file and rename it accordingly.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="audio-indicator" class="muted">
+  <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+  <span class="audio-label">Music Off</span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

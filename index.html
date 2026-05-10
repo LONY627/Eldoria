@@ -1,0 +1,1068 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eldoria — A World Awaits</title>
+<link rel="icon" href="eldoria-icon.jpg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FLAME CURSOR — CANVAS
+     This single canvas covers the entire screen (fixed, full-size).
+     pointer-events:none means ALL clicks/hovers pass through it
+     to the real page underneath — nothing on the page is blocked.
+     z-index:99999 keeps it painted above every other element.
+     The OS cursor is hidden via CSS below (cursor:none on *).
+     The JS block at the bottom of <body> drives all the animation.
+════════════════════════════════════════════════════════════ -->
+
+
+<!--🔴🟥🛡️🛡️🛡️🟥🔴『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔴🟥🛡️🛡️🛡️🟥🔴-->
+<canvas id="torch-light-canvas"></canvas>
+<!--🔴🟥🛡️🛡️🛡️🟥🔴🔵『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔵🔴🟥🛡️🛡️🛡️🟥🔴-->
+
+
+<canvas id="flame-cursor-canvas"
+  style="position:fixed;top:0;left:0;width:100vw;height:100vh;
+         pointer-events:none;z-index:99999;"></canvas>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FLAME CURSOR — HIDE THE REAL CURSOR
+     cursor:none on * removes the OS pointer everywhere.
+     This makes the animated canvas flame the ONLY visible cursor.
+════════════════════════════════════════════════════════════ -->
+<style>
+  * { cursor: none !important; }
+
+
+
+
+
+
+
+
+/*🔴🟥🛡️🛡️🛡️🟥🔴『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔴🟥🛡️🛡️🛡️🟥🔴*/
+
+
+
+
+
+/* ═══════════════════════════════
+   TORCH LIGHT OVERLAY
+   A radial gradient overlay that
+   follows each torch position,
+   brightening nearby content.
+   Rendered as box-shadow / CSS
+   gradient on a ::before pseudo.
+   Actual light = JS canvas layer.
+═══════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════
+   TORCH COMPONENT
+   Each .torch-wrap is an absolutely-positioned container
+   that holds the bracket SVG + the animated flame canvas.
+   These are placed by JS at defined positions on the page.
+═══════════════════════════════════════════════════════ */
+.torch-wrap {
+  position: absolute;
+  width: 32px;
+  pointer-events: none;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* the iron wall bracket under the flame */
+.torch-bracket {
+  width: 32px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+/* the per-torch flame canvas */
+.torch-flame-canvas {
+  position: absolute;
+  top: -48px;             /* flame rises above the bracket */
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════
+   LIGHT OVERLAY CANVAS
+   One full-page canvas that renders
+   the soft orange glow around each
+   torch position. Uses 'lighter'
+   blend mode to brighten content.
+═══════════════════════════════ */
+#torch-light-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 10;
+  mix-blend-mode: screen;   /*🛡️🛡️ brightens whatever is underneath 🛡️🛡️*/
+}
+
+
+
+
+
+/*🔴🟥🛡️🛡️🛡️🟥🔴🔵『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔵🔴🟥🛡️🛡️🛡️🟥🔴*/
+
+
+
+</style>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particles-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.6;"></canvas>
+
+<!-- WELCOME OVERLAY -->
+<div id="welcome-overlay">
+  <div class="welcome-flames">
+    <div><img src="img-tag-flame2.gif" height="150" width="100"></div>
+    <div class="welcome-title">Welcome to Eldoria</div>
+    <div><img src="img-tag-flame2.gif" height="150" width="100"></div>
+  </div>
+  <div class="welcome-sub">A World Torn by Darkness &nbsp;·&nbsp; A Story Yet Unfinished<br><img src="img-welcome.png" height="80" width="650"></div>
+  <div class="welcome-enter-hint">Click anywhere or press any key to enter</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="eldoria-icon.jpg" alt="Eldoria">
+  </a>
+  <ul class="nav-links">
+    <li class="nav-item">
+      <a href="index.html" class="nav-btn" data-page="index.html">
+        <span class="label-main">Eden</span>
+        <span class="label-hover">Home</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="story.html" class="nav-btn" data-page="story.html">
+        <span class="label-main">The Lore</span>
+        <span class="label-hover">Full Story</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="updates.html" class="nav-btn" data-page="updates.html">
+        <span class="label-main">Scrolls</span>
+        <span class="label-hover">Updates</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="guide.html" class="nav-btn" data-page="guide.html">
+        <span class="label-main">Journey</span>
+        <span class="label-hover">How to Join</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="press.html" class="nav-btn" data-page="press.html">
+        <span class="label-main">PRESS</span>
+        <span class="label-hover">Watch</span>
+      </a>
+    </li>
+    <li class="nav-item social-wrapper">
+      <button class="social-toggle">Realm <span class="arrow">▾</span></button>
+      <div class="social-scroll">
+        <a class="social-link" href="https://discord.gg/yf2Mn4Q7Px" target="_blank"><span class="social-icon"><img src="img-tag-discord.png" height="20" width="20"></span> Discord</a>
+        <a class="social-link" href="https://youtube.com/" target="_blank"><span class="social-icon"><img src="img-tag-youtube.png" height="20" width="20"></span> YouTube</a>
+        <a class="social-link" href="https://instagram.com/" target="_blank"><span class="social-icon"><img src="img-tag-instagram.png" height="20" width="20"></span> Instagram</a>
+        <a class="social-link" href="https://facebook.com/" target="_blank"><span class="social-icon"><img src="img-tag-facebook.png" height="20" width="20"></span> Facebook</a>
+        <a class="social-link" href="https://wa.me/" target="_blank"><span class="social-icon"><img src="img-tag-whatsapp.png" height="20" width="20"></span> WhatsApp</a>
+      </div>
+    </li>
+    
+    <!-- INFORMATION dropdown (NEW) -->
+    <li class="nav-item info-wrapper">
+      <button class="info-toggle" id="infoToggle">More Info<span class="arrow">▾</span></button>
+      <div class="info-scroll" id="infoScroll">
+        <a class="info-link" href="eldoria_campfire_massges.html" ><span class="social-icon">✦</span> Explain</a>
+        <a class="info-link" href="Hello2.html"><span class="social-icon">❧</span> Hello 2</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right">
+    <button class="settings-btn" id="settings-btn" title="Settings">⚙</button>
+  </div>
+</nav>
+
+<!-- SETTINGS PANEL -->
+<div id="settings-panel">
+  <div class="settings-header">⚙ &nbsp; Realm Settings</div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="dark">Dark</button>
+      <button class="mode-btn" data-mode="normal">Normal</button>
+      <button class="mode-btn" data-mode="bright">Light</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Sound & Effects</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Background Music</span>
+      <label class="toggle-switch"><input type="checkbox" id="music-toggle"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Floating Particles</span>
+      <label class="toggle-switch"><input type="checkbox" id="particles-toggle" checked><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Server Info</div>
+    <div style="font-family:var(--font-heading);font-size:0.72rem;color:var(--text-muted);letter-spacing:0.08em;line-height:1.8;">
+      IP: <span style="color:var(--gold);">play.eldoria.net</span><br>
+      Version: <span style="color:var(--gold);">1.21.1 𓆩♱𓆪</span><br>
+      Status: <span style="color:var(--gold);">⟨ </span><span style="color:#ff0000;">OFFLINE</span><span style="color:var(--gold);"> ⟩ </span><span style="color:#ff7b00;">ᴄᴏᴍɪɴɢ ꜱᴏᴏɴ !</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <!-- Decorative castle SVG silhouette -->
+  <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:35%;opacity:0.15;pointer-events:none;z-index:2;" viewBox="0 0 1400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+    <path d="M0,300 L0,200 L40,200 L40,160 L60,160 L60,140 L80,140 L80,160 L100,160 L100,200
+             L130,200 L130,180 L140,180 L140,170 L150,170 L150,160 L160,160 L160,140 L150,140
+             L150,120 L170,100 L190,120 L190,140 L180,140 L180,160 L190,160 L190,170 L200,170
+             L200,180 L210,180 L210,200 L250,200 L250,220 L300,220 L300,200 L340,200 L340,150
+             L360,150 L360,120 L370,120 L370,100 L380,100 L380,80 L390,80 L390,60 L400,60
+             L400,80 L410,80 L410,100 L420,100 L420,120 L430,120 L430,150 L450,150 L450,200
+             L500,200 L500,180 L520,180 L520,200 L560,200 L560,220 L600,220 L600,200
+             L640,200 L640,150 L660,150 L660,130 L680,130 L680,110 L700,90 L720,110 L720,130
+             L740,130 L740,150 L760,150 L760,200 L800,200 L800,220 L840,220 L840,200
+             L880,200 L880,150 L900,150 L900,120 L910,120 L910,100 L920,80 L930,100 L930,120
+             L940,120 L940,150 L960,150 L960,200 L1000,200 L1000,180 L1020,160 L1040,180
+             L1040,200 L1080,200 L1080,220 L1120,220 L1120,200 L1160,200 L1160,160 L1180,160
+             L1180,140 L1200,140 L1200,160 L1220,160 L1220,200 L1260,200 L1260,220 L1300,220
+             L1300,200 L1340,200 L1340,160 L1360,160 L1360,200 L1400,200 L1400,300 Z"
+          fill="#c8a84b"/>
+  </svg>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">A Minecraft Story Server</p>
+    <h1 class="hero-title">﴾ <span class="big-e">E</span>ldoria ﴿</h1>
+    <p class="hero-subtitle">Where Every Blade Has a Shadow &nbsp;·&nbsp; Where Every Choice Has Weight</p>
+    <div class="ornate-divider">
+      <div class="line"></div>
+      <span class="gem">⚜</span>
+      <div class="line"></div>
+    </div>
+    <p class="hero-tagline">
+      Long ago, a kingdom of light was shattered. The king is dead. The clans are at war.<br>
+      The darkness stirs once more — and only you can end it.
+    </p>
+    <div class="hero-buttons">
+      <a href="guide.html" class="btn-primary"><span>⚔ Begin Your Journey</span></a>
+      <a href="story.html" class="btn-secondary">Read the Lore ❯</a>
+    </div>
+  </div>
+
+  <div class="castle-silhouette"></div>
+</section>
+
+<!-- ═══════ ABOUT ═══════ -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">«What Is Eldoria»</div>
+    <h2 class="section-title reveal">﹝A World Built on Story﹞</h2>
+    <p class="section-body reveal">
+      Eldoria is not just a Minecraft server — it is an experience. A living, breathing world crafted with cinematic storytelling, immersive sound design, and a narrative that evolves with every player action.
+    </p>
+
+    <div class="cards-grid reveal">
+      <div class="card">
+        <div class="card-icon">🗺</div>
+        <div class="card-title">Story-Driven</div>
+        <p class="card-text">A hand-crafted narrative spanning ancient kingdoms, fallen heroes, and a darkness that grows with every passing day. You are not just a player — you are part of the legend.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚔</div>
+        <div class="card-title">Clans & Alliances</div>
+        <p class="card-text">Join one of three powerful clans — Bloodcrest, Nighthowl, or Emberwing — or walk alone as a Scavenger. Every alliance shapes your path and determines your fate.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗝</div>
+        <div class="card-title">12 Mysterious Keys</div>
+        <p class="card-text">Scattered across ancient civilizations, hidden realms, and powerful bosses. Collect all twelve to unlock the gate to the final darkness — if you dare.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📽</div>
+        <div class="card-title">Cinematic Immersion</div>
+        <p class="card-text">Real human voice acting, in-game cinematics, custom music for every region, and a personal assistant named Freya who guides you through the world.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">𓀤𓀥</div>
+        <div class="card-title">Ancient Civilizations</div>
+        <p class="card-text">Explore lands inspired by Egypt, Greece, Rome, feudal Japan, Norse mythology and beyond. Each holds unique quests, cultures, and fragments of the broken world.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">♛</div>
+        <div class="card-title">100+ Custom Bosses</div>
+        <p class="card-text">Creatures of darkness, ancient gods, and corrupted kings. Every boss is a unique encounter with custom 3D models, mechanics, and a reward worth dying for.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ STORY PREVIEW ═══════ -->
+<section class="section" style="background:var(--dark-mid);">
+  <div class="section-inner">
+    <div class="section-label">The Legend</div>
+    <h2 class="section-title reveal">Once, There Was Peace</h2>
+
+    <div class="story-panel reveal">
+      <span class="story-drop-cap">L</span>
+      <div class="story-text">
+        <p>ong, long ago there stood a kingdom known as <em>Eldoria</em> — where grass and flowers bloomed freely, where the sky shone with rainbow light and the sun blessed every corner of the land. Citizens lived without fear, under the watch of a single, true king: <strong>Maximus</strong>, brave and honest, who kept the world from the shadows of war for years uncounted.</p>
+        <span class="dramatic">— Then came the Darkness —</span>
+        <p>A hidden veil was torn open and all that was peaceful began to decay. King Maximus fought war after war. With the armies of Elves, Humans, Knights, Angels, Romans, and Egyptians at his side, the light of peace grew visible once more... until greed began to stir within the light itself. Traitors rose. Kingdoms shattered. And one dark night, a blade from within his own kingdom silenced the king forever.</p>
+        <span class="dramatic">· · · ·</span>
+        <p>Now the sky is black with smoke from burning villages. Rivers run red. The clans that remain blame each other for what was lost. And in the absence of walls and watchful eyes — the monsters walk freely.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:30px;" class="reveal">
+      <a href="story.html" class="btn-secondary">Continue Reading the Full Legend ❯</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ THE THREE CLANS ═══════ -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Choose Your Allegiance</div>
+    <h2 class="section-title reveal">The Three Clans</h2>
+    <p class="section-body reveal">Each clan was forged from the ashes of the old kingdom. They fight, they scheme, they survive — and they despise one another. Choose wisely. Your clan is your family, your shield, and your burden.</p>
+
+    <div class="clans-grid reveal">
+      <div class="clan-card bloodcrest">
+        <span class="clan-emblem">☠</span>
+        <div class="clan-name">Bloodcrest</div>
+        <p class="clan-motto">"We were betrayed first. We will strike last."</p>
+        <p class="clan-desc">Warriors hardened by the fall of Eldoria. They believe strength alone determines truth. Fierce in battle, unforgiving in memory. Bloodcrest fights not for glory — but for vengeance.</p>
+      </div>
+      <div class="clan-card nighthowl">
+        <span class="clan-emblem">❍</span>
+        <div class="clan-name">Nighthowl</div>
+        <p class="clan-motto">"In shadows, truth survives."</p>
+        <p class="clan-desc">Masters of the dark hours and keepers of forbidden knowledge. They distrust daylight and deals alike. Nighthowl moves unseen, gathering secrets and waiting for the moment the world is ready to listen.</p>
+      </div>
+      <div class="clan-card emberwing">
+        <span class="clan-emblem">𓆰𓆪</span>
+        <div class="clan-name">Emberwing</div>
+        <p class="clan-motto">"From ruin, we rise again."</p>
+        <p class="clan-desc">Descendants of the old kingdom's builders. They believe Eldoria can be restored. Emberwing seeks the 12 Keys not for power, but to seal the darkness away once and for all and rebuild what was taken.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;" class="reveal">
+      <p style="font-family:var(--font-body);font-style:italic;font-size:0.9rem;color:var(--text-muted);">Or walk alone as a <strong style="color:var(--silver);">Scavenger</strong> — no loyalty, no protection, no mercy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ THE 12 KEYS ═══════ -->
+<section class="section" style="background:var(--dark-mid);">
+  <div class="section-inner">
+    <div class="section-label">The Quest</div>
+    <h2 class="section-title reveal">The Twelve Keys</h2>
+    <p class="section-body reveal">Scattered across ancient ruins, hidden in boss lairs, locked behind riddles and betrayals. Only when all twelve keys are gathered can the dark veil be unsealed. Only then can the final war begin.</p>
+
+    <div class="keys-display reveal">
+      <div class="key-item">🗝</div>
+      <div class="key-item">🗝</div>
+      <div class="key-item">🗝</div>
+      <div class="key-item">🗝</div>
+      <div class="key-item">🗝</div>
+      <div class="key-item">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+      <div class="key-item" style="opacity:0.3;filter:grayscale(1);">🗝</div>
+    </div>
+    <p style="text-align:center;font-family:var(--font-heading);font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);margin-top:16px;" class="reveal">6 OF 12 KEYS GATHERED — THE DARKNESS STIRS</p>
+  </div>
+</section>
+
+<!-- ═══════ WORLD LOCATIONS ═══════ -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">The Known World</div>
+    <h2 class="section-title reveal">Civilizations Lost & Found</h2>
+    <p class="section-body reveal">The world is vast. Ancient empires lie dormant, waiting to be discovered. Each region holds its own culture, quests, music, and secrets that connect to the greater story.</p>
+
+    <div class="cards-grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">🏛</div>
+        <div class="card-title">Desert Kingdom</div>
+        <p class="card-text">Inspired by ancient Egypt. Pyramids of forgotten pharaohs hold the oldest key fragments.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">🌸</div>
+        <div class="card-title">Cherry Blossom Lands</div>
+        <p class="card-text">Feudal Japan reborn. Samurai spirits and ancient scrolls line the mountain temples.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">🏺</div>
+        <div class="card-title">Roman Dominion</div>
+        <p class="card-text">Grand arches and marble halls — and beneath them, colosseum arenas where champions die.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Greek Realm</div>
+        <p class="card-text">Mythic cities perched on cliffs. The gods are silent — but their monsters are not.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">❄</div>
+        <div class="card-title">Nordic Wastes</div>
+        <p class="card-text">Snow, mead halls, and the frozen tombs of berserkers who once held back the night.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">🌿</div>
+        <div class="card-title">Jungle Ruins</div>
+        <p class="card-text">Tribal civilizations swallowed by vines. The deepest secrets of the darkness lie here.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">Map</div>
+        <div class="card-title">Jungle Ruins</div>
+        <p class="card-text"><img src="tmap.jpg" height="120" width="160" ></p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon">Video</div>
+        <div class="card-title">TEst Vedio</div>
+        <div class="video-container">
+          <video width="120" height="180" controls>
+            <source src="eldoria-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        <p class="card-text">Test</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ JOURNEY BUTTONS ═══════ -->
+<section class="section" style="background:var(--dark-mid);">
+  <div class="section-inner">
+    <div class="section-label">Enter the World</div>
+    <h2 class="section-title reveal">Where Will You Go?</h2>
+
+    <div class="bottom-links reveal">
+      <a href="guide.html" class="bottom-link-btn">
+        <span class="bl-icon">🗺</span>
+        <span>How to Join</span>
+        <span class="bl-desc">Your first steps into 【𝐄𝐋𝐃𝐎𝐑𝐈𝐀】</span>
+      </a>
+      <a href="story.html" class="bottom-link-btn">
+        <span class="bl-icon">🗐</span>
+        <span>Full Lore</span>
+        <span class="bl-desc">The complete legend of 【𝐄𝐋𝐃𝐎𝐑𝐈𝐀】</span>
+      </a>
+      <a href="updates.html" class="bottom-link-btn">
+        <span class="bl-icon">🗁</span>
+        <span>Dev Logs</span>
+        <span class="bl-desc">Latest updates from the 【𝐒𝐄𝐑𝐕𝐄𝐑】</span>
+      </a>
+      <a href="press.html" class="bottom-link-btn">
+        <span class="bl-icon">▶</span>
+        <span>PRESS</span>
+        <span class="bl-desc">A message from the creator  【𝕷𝕺𝕹𝖄】</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Eldoria</div>
+  <p class="footer-tagline">"Once a kingdom of light. Now a story waiting to be written."</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="story.html">The Lore</a>
+    <a href="guide.html">Join</a>
+    <a href="updates.html">Updates</a>
+    <a href="press.html">Press</a>
+    <a href="https://discord.gg/yf2Mn4Q7Px" target="_blank">Discord</a>
+  </div>
+  <div class="footer-copy">© Eldoria — All rights reserved &nbsp;·&nbsp; Built with passion for the story</div>
+</footer>
+
+<!-- AUDIO INDICATOR -->
+<div id="audio-indicator" class="muted">
+  <div class="bars">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <span class="audio-label">Music Off</span>
+</div>
+
+<script src="script.js"></script>
+
+
+
+
+
+
+<!--🔴🟥🛡️🛡️🛡️🟥🔴『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔴🟥🛡️🛡️🛡️🟥🔴-->
+
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FLAME CURSOR — ALL JAVASCRIPT
+     Nothing below touches any existing Eldoria code.
+     Every variable is scoped inside an IIFE (() => { ... })()
+     so there is zero risk of name collisions with script.js.
+
+     HOW IT WORKS:
+     ┌─────────────────────────────────────────────────────┐
+     │  Mouse moves  →  mouseX / mouseY update             │
+     │  Every rAF frame:                                   │
+     │    1. Clear canvas                                  │
+     │    2. Spawn new flame particles at cursor           │
+     │    3. Update each particle (move, age, shrink)      │
+     │    4. Draw each particle (glowing gradient circle)  │
+     │    5. Draw the golden arrow-pointer tip on top      │
+     │  On click: burst of extra particles outward         │
+     └─────────────────────────────────────────────────────┘
+════════════════════════════════════════════════════════════ -->
+<script>
+(() => {
+
+  /* ── CANVAS SETUP ─────────────────────────────────────────
+     Grab the canvas injected at the top of <body>.
+     Size it to the full window; re-size on window resize.   */
+  const FC   = document.getElementById('flame-cursor-canvas');
+  const fctx = FC.getContext('2d');
+
+  const resize = () => { FC.width = innerWidth; FC.height = innerHeight; };
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── MOUSE TRACKING ──────────────────────────────────────
+     mx / my always hold the latest cursor position.
+     Particles are spawned here every frame.                 */
+  let mx = -300, my = -300;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  /* ── PARTICLE POOL ────────────────────────────────────────
+     Each particle is a plain object:
+       x, y   — screen position
+       vx, vy — velocity (vy is negative = moves upward)
+       life   — 1.0 (fresh) → 0.0 (dead)
+       decay  — how fast life drains per frame
+       size   — radius in px
+       hue    — HSL hue (30–60 = orange to yellow)            */
+  let particles = [];
+
+  /* ── SPAWN PARTICLES ──────────────────────────────────────
+     Called each frame (count=5) or on click (count=30).
+     Creates new particles at position (x, y) with random
+     scatter, upward velocity, and orange-yellow colour.     */
+  const spawn = (x, y, count = 5) => {
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x:     x + (Math.random() - .5) * 10,
+        y:     y + (Math.random() - .5) * 6,
+        vx:    (Math.random() - .5) * 1.2,
+        vy:    -(1.8 + Math.random() * 2.4),
+        life:  1.0,
+        decay: .028 + Math.random() * .022,
+        size:  3   + Math.random() * 5,
+        hue:   30  + Math.random() * 30,
+      });
+    }
+  };
+
+  /* ── UPDATE PARTICLES (PHYSICS) ──────────────────────────
+     Each frame, every particle:
+       • moves by its velocity
+       • flickers sideways (random vx nudge)
+       • slows its rise slightly (vy *= 0.985)
+       • shrinks (size *= 0.975)
+       • loses life by its decay rate
+       • is removed when life hits 0                         */
+  const update = () => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vx += (Math.random() - .5) * .25;
+      p.vy *= .985;
+      p.size *= .975;
+      p.life -= p.decay;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+  };
+
+  /* ── DRAW PARTICLES ───────────────────────────────────────
+     Uses globalCompositeOperation = 'lighter':
+     overlapping particles ADD brightness → bright hot core.
+     Each particle is a radial gradient circle:
+       centre → near-white yellow (hottest)
+       edge   → dark red, transparent (cool/fading)          */
+  const draw = () => {
+    fctx.globalCompositeOperation = 'lighter';
+    for (const p of particles) {
+      const a = Math.max(0, p.life);
+      const g = fctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
+      g.addColorStop(0,   `hsla(${p.hue+20},100%,95%,${a*.9})`);
+      g.addColorStop(.4,  `hsla(${p.hue},  100%,60%,${a*.7})`);
+      g.addColorStop(1,   `hsla(${p.hue-20},80%,30%,0)`);
+      fctx.beginPath();
+      fctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+      fctx.fillStyle = g;
+      fctx.fill();
+    }
+    fctx.globalCompositeOperation = 'source-over';
+  };
+
+  /* ── GOLDEN ARROW POINTER TIP ─────────────────────────────
+     Drawn on top of the flame every frame.
+     Classic arrow-cursor shape filled gold (#f0d060),
+     matching Eldoria's --gold palette variable.
+     The very tip of the arrow is the exact click hotspot.   */
+  const drawTip = (x, y) => {
+    fctx.save();
+
+    /* subtle warm glow ring under the tip */
+    const glow = fctx.createRadialGradient(x, y, 0, x, y, 12);
+    glow.addColorStop(0, 'rgba(200,168,75,.35)');
+    glow.addColorStop(1, 'rgba(200,100,0,0)');
+    fctx.beginPath();
+    fctx.arc(x, y, 12, 0, Math.PI * 2);
+    fctx.fillStyle = glow;
+    fctx.fill();
+
+    /* classic pointer arrow shape */
+    fctx.beginPath();
+    fctx.moveTo(x,      y);
+
+
+
+    //*  ❮❮❮⭕ Mouse Cursore arrow ⮞ ⭕❯❯❯  *//     ⮜⚙️⮞  
+    ` 
+    fctx.lineTo(x + 10, y + 14);
+    fctx.lineTo(x + 1,  y + 8);
+    fctx.lineTo(x - 0,  y + 8);
+    fctx.lineTo(x - 10,  y + 14);
+    `
+    //*  ❮❮❮〇 Mouse Cursore arrow ⮞ 〇❯❯❯  *//      ⮜⚙️⮞      
+
+    fctx.closePath();
+
+    fctx.fillStyle   = '#f0d060';
+    fctx.strokeStyle = 'rgba(120,70,0,.8)';
+    fctx.lineWidth   = 0.8;
+    fctx.fill();
+    fctx.stroke();
+
+    fctx.restore();
+  };
+
+  /* ── MAIN ANIMATION LOOP ──────────────────────────────────
+     Runs every frame via requestAnimationFrame.
+     Order: clear → spawn → update → draw particles → draw tip */
+  const loop = () => {
+    fctx.clearRect(0, 0, FC.width, FC.height);
+    spawn(mx, my, 5);
+    update();
+    draw();
+    drawTip(mx, my);
+    requestAnimationFrame(loop);
+  };
+  loop();
+
+  /* ── CLICK BURST ──────────────────────────────────────────
+     On every click, 30 extra particles shoot outward —
+     the flame flares on impact.                             */
+  document.addEventListener('click', e => {
+    for (let i = 0; i < 30; i++) {
+      const angle = (i / 30) * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 3.5;
+      particles.push({
+        x:     e.clientX + (Math.random() - .5) * 8,
+        y:     e.clientY + (Math.random() - .5) * 8,
+        vx:    Math.cos(angle) * speed,
+        vy:    Math.sin(angle) * speed - 2,
+        life:  1.0,
+        decay: .025 + Math.random() * .025,
+        size:  4 + Math.random() * 6,
+        hue:   20 + Math.random() * 40,
+      });
+    }
+  });
+
+})();
+
+
+
+/*🔴🟥🛡️🛡️🛡️🟥🔴🔵『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔵🔴🟥🛡️🛡️🛡️🟥🔴*/
+
+
+
+
+
+
+
+
+
+/*🔴🟥🛡️🛡️🛡️🟥🔴『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔴🟥🛡️🛡️🛡️🟥🔴*/
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TORCH SYSTEM — full explanation
+   
+   OVERVIEW:
+   We place decorative iron-bracket torches on the page walls.
+   Each torch has two parts:
+     1. A visual flame — drawn on a small per-torch <canvas>
+        using particle animation (same technique as flame cursor)
+     2. A light glow — drawn on one full-page fixed <canvas>
+        using soft radial gradients in 'screen' blend mode,
+        which brightens the dark text near each torch
+   
+   SECTIONS:
+   A. Torch position definitions
+   B. Build torch DOM elements (bracket SVG + flame canvas)
+   C. Particle system per torch
+   D. Light canvas — full-page glow layer
+   E. Main animation loop
+═══════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════
+   A. TORCH POSITIONS
+   Each torch is defined as { selector, side, offsetY }
+     selector — CSS selector for the parent section
+     side     — 'left' or 'right' wall
+     offsetY  — px from top of section
+══════════════════════════════════════════════════════ */
+const TORCH_DEFS = [
+  { selector: 'section',   side: 'left',  offsetY: 200 },
+  { selector: 'section',   side: 'right', offsetY: 200 },
+  { selector: '#about',  side: 'left',  offsetY: 120 },
+  { selector: '#about',  side: 'right', offsetY: 120 },
+  { selector: '#lore',   side: 'left',  offsetY: 100 },
+  { selector: '#lore',   side: 'right', offsetY: 300 },
+  { selector: '#order',  side: 'left',  offsetY: 100 },
+  { selector: '#order',  side: 'right', offsetY: 100 },
+  { selector: '#roster', side: 'left',  offsetY: 80  },
+  { selector: '#roster', side: 'right', offsetY: 80  },
+];
+
+const TORCH_OFFSET_X = 18; /* px from the section edge */
+const FLAME_W = 44;
+const FLAME_H = 70;
+
+
+/* ══════════════════════════════════════════════════════
+   B. BUILD TORCH DOM ELEMENTS
+   For each definition, create a .torch-wrap div,
+   insert an SVG iron bracket, and add a <canvas>
+   for that torch's individual flame particles.
+══════════════════════════════════════════════════════ */
+const torches = []; /* will hold { wrap, canvas, ctx, particles, x, y } */
+
+TORCH_DEFS.forEach(def => {
+  const section = document.querySelector(def.selector);
+  if (!section) return;
+
+  /* make section a positioning context if needed */
+  const spos = getComputedStyle(section).position;
+  if (spos === 'static') section.style.position = 'relative';
+
+  /* outer wrapper */
+  const wrap = document.createElement('div');
+  wrap.className = 'torch-wrap';
+
+  /* position on the wall */
+  const xPos = def.side === 'left'
+    ? TORCH_OFFSET_X
+    : section.offsetWidth - TORCH_OFFSET_X - 32;
+  wrap.style.left = xPos + 'px';
+  wrap.style.top  = def.offsetY + 'px';
+
+  /* iron wall bracket — SVG drawn inline */
+  wrap.innerHTML = `
+    <svg class="torch-bracket" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- wall plate -->
+      <rect x="12" y="0" width="8" height="14" rx="1" fill="#2a2010"/>
+      <!-- rivet top -->
+      <circle cx="16" cy="3" r="1.5" fill="#1a1208"/>
+      <!-- rivet bottom -->
+      <circle cx="16" cy="11" r="1.5" fill="#1a1208"/>
+      <!-- arm extending from wall -->
+      <rect x="9" y="11" width="14" height="3" rx="1" fill="#222010" transform="rotate(-5 9 11)"/>
+      <!-- torch body (wood handle) -->
+      <rect x="13" y="18" width="6" height="18" rx="2" fill="#3a2808"/>
+      <!-- metal band top of handle -->
+      <rect x="12" y="18" width="8" height="3" rx="1" fill="#2a2010"/>
+      <!-- metal band bottom -->
+      <rect x="12" y="33" width="8" height="2" rx="1" fill="#2a2010"/>
+      <!-- torch cup / ember bowl -->
+      <path d="M10 18 Q16 14 22 18 L20 20 Q16 17 12 20 Z" fill="#3a2a10"/>
+      <!-- glowing ember in bowl -->
+      <ellipse cx="16" cy="19" rx="4" ry="2" fill="#7a4010" opacity="0.9"/>
+      <ellipse cx="16" cy="19" rx="2" ry="1" fill="#cc6600" opacity="0.7"/>
+    </svg>`;
+
+  /* per-torch flame canvas — sits above the bracket */
+  const fc = document.createElement('canvas');
+  fc.className = 'torch-flame-canvas';
+  fc.width  = FLAME_W;
+  fc.height = FLAME_H;
+  wrap.appendChild(fc);
+
+  section.appendChild(wrap);
+
+  /* store torch data for the animation loop */
+  torches.push({
+    wrap,
+    canvas: fc,
+    ctx: fc.getContext('2d'),
+    particles: [],
+    def,     /* keep ref to re-calc screen pos */
+    section,
+  });
+});
+
+
+/* ══════════════════════════════════════════════════════
+   C. PARTICLE SYSTEM (per torch)
+   Same particle approach as the flame cursor —
+   each frame we spawn a few upward-rising embers
+   on each torch's small canvas.
+   
+   spawnTorch(torch) — adds new particles
+   updateTorch(torch) — moves & ages particles
+   drawTorch(torch)  — renders to that torch's canvas
+══════════════════════════════════════════════════════ */
+
+/* spawn particles at the centre of the torch bowl */
+function spawnTorch(t) {
+  const cx = FLAME_W / 2;
+  const cy = FLAME_H - 4; /* bottom of the flame canvas = top of bowl */
+
+  for (let i = 0; i < 3; i++) {
+    t.particles.push({
+      x:     cx + (Math.random() - .5) * 8,
+      y:     cy,
+      vx:    (Math.random() - .5) * .9,
+      vy:    -(1.2 + Math.random() * 1.8),
+      life:  1.0,
+      decay: .032 + Math.random() * .02,
+      size:  2.5 + Math.random() * 4,
+      hue:   25 + Math.random() * 35,    /* orange–yellow */
+    });
+  }
+}
+
+function updateTorch(t) {
+  for (let i = t.particles.length - 1; i >= 0; i--) {
+    const p = t.particles[i];
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vx += (Math.random() - .5) * .2;
+    p.vy *= .988;
+    p.size *= .972;
+    p.life -= p.decay;
+    if (p.life <= 0) t.particles.splice(i, 1);
+  }
+}
+
+function drawTorch(t) {
+  const ctx = t.ctx;
+  ctx.clearRect(0, 0, FLAME_W, FLAME_H);
+
+  ctx.globalCompositeOperation = 'lighter';
+
+  for (const p of t.particles) {
+    const a = Math.max(0, p.life);
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.2);
+    g.addColorStop(0,   `hsla(${p.hue+20}, 100%, 92%, ${a * .85})`);
+    g.addColorStop(.45, `hsla(${p.hue},    100%, 58%, ${a * .65})`);
+    g.addColorStop(1,   `hsla(${p.hue-15},  80%, 28%, 0)`);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+
+/* ══════════════════════════════════════════════════════
+   D. LIGHT CANVAS — full-page ambient glow
+   
+   A fixed <canvas> covers the whole viewport.
+   Every frame we:
+     1. Clear it
+     2. For each torch, calculate its screen position
+        (getBoundingClientRect of the wrap)
+     3. Draw a soft radial gradient at that position
+        using 'screen' blend mode
+   
+   'screen' blend: black = no effect, white = full bright.
+   An orange circle in screen mode brightens dark text
+   beneath it to a warm amber — exactly like real torchlight
+   lighting a stone wall.
+   
+   The glow radius is kept small (~120px) so only nearby
+   text is illuminated, not the whole page.
+══════════════════════════════════════════════════════ */
+const lightCanvas = document.getElementById('torch-light-canvas');
+const lctx        = lightCanvas.getContext('2d');
+
+function resizeLightCanvas() {
+  lightCanvas.width  = window.innerWidth;
+  lightCanvas.height = window.innerHeight;
+}
+resizeLightCanvas();
+window.addEventListener('resize', resizeLightCanvas);
+
+/* slight flicker — modulate glow radius by a sine wave */
+let flickerT = 0;
+
+function drawLight() {
+  lctx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
+
+  flickerT += 0.04;
+
+  torches.forEach((t, i) => {
+    /* get torch screen position from its DOM wrap */
+    const rect = t.wrap.getBoundingClientRect();
+    /* centre of the torch bowl (roughly 2/3 down the wrap) */
+    const sx = rect.left + rect.width  / 2;
+    const sy = rect.top  + rect.height * 0.42;
+
+    /* flicker: vary radius ±8px with a sine wave (different phase per torch) */
+    const flicker = Math.sin(flickerT + i * 1.3) * 8;
+    const radius  = 115 + flicker;
+
+    /* draw the ambient glow as a radial gradient */
+    const grad = lctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
+    /* warm orange centre — screen blend brightens dark text to readable amber */
+    grad.addColorStop(0,    'rgba(180, 100, 20, 0.38)');
+    grad.addColorStop(0.35, 'rgba(140,  70, 10, 0.22)');
+    grad.addColorStop(0.65, 'rgba( 90,  40,  5, 0.10)');
+    grad.addColorStop(1,    'rgba(  0,   0,  0, 0.00)');
+
+    lctx.globalCompositeOperation = 'screen';
+    lctx.beginPath();
+    lctx.arc(sx, sy, radius, 0, Math.PI * 2);
+    lctx.fillStyle = grad;
+    lctx.fill();
+  });
+
+  lctx.globalCompositeOperation = 'source-over';
+}
+
+
+/* ══════════════════════════════════════════════════════
+   E. MAIN ANIMATION LOOP
+   Runs every frame via requestAnimationFrame.
+   For each torch: spawn → update → draw flame.
+   Then draw the light glow layer once.
+══════════════════════════════════════════════════════ */
+function loop() {
+  torches.forEach(t => {
+    spawnTorch(t);
+    updateTorch(t);
+    drawTorch(t);
+  });
+
+  drawLight();
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+
+/* ══════════════════════════════════════════════════════
+   F. REPOSITION TORCHES ON RESIZE
+   When the window resizes, section widths change,
+   so we need to recalculate the right-side torch X.
+══════════════════════════════════════════════════════ */
+window.addEventListener('resize', () => {
+  torches.forEach(t => {
+    const section = t.section;
+    const side    = t.def.side;
+    const xPos = side === 'left'
+      ? TORCH_OFFSET_X
+      : section.offsetWidth - TORCH_OFFSET_X - 32;
+    t.wrap.style.left = xPos + 'px';
+  });
+  resizeLightCanvas();
+});
+
+
+
+
+
+
+/*🔴🟥🛡️🛡️🛡️🟥🔴🔵『𝕃𝕆ℕ𝕐』—【𝖒𝖆𝖞 𝖇𝖊 𝖈𝖔𝖓𝖋𝖎𝖌𝖚𝖗𝖊𝖉 𝖑𝖆𝖙𝖊𝖗】🔵🔴🟥🛡️🛡️🛡️🟥🔴*/
+
+
+
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════
+   NAVBAR — dropdown toggles
+═══════════════════════════════════════════════ */
+function setupDropdown(toggleId, scrollId){
+  const btn = document.getElementById(toggleId);
+  const menu = document.getElementById(scrollId);
+  if(!btn||!menu) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    const isOpen = menu.classList.contains('open');
+    // close all dropdowns first
+    document.querySelectorAll('.social-scroll, .info-scroll').forEach(m=>m.classList.remove('open'));
+    document.querySelectorAll('.social-toggle, .info-toggle').forEach(t=>t.classList.remove('open'));
+    if(!isOpen){ menu.classList.add('open'); btn.classList.add('open'); }
+  });
+}
+setupDropdown('realmToggle','realmScroll');
+setupDropdown('infoToggle','infoScroll');
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(){
+  document.querySelectorAll('.social-scroll, .info-scroll').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.social-toggle, .info-toggle').forEach(t=>t.classList.remove('open'));
+});
+document.getElementById('settings-panel').addEventListener('click', e=>e.stopPropagation());
+
+
+
+
+</script>
+</body>
+</html>
+

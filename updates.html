@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev Scrolls — Eldoria Updates</title>
+<link rel="icon" href="eldoria-icon.jpg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="particles-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.3;"></canvas>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><img src="eldoria-icon.jpg" alt="Eldoria"></a>
+  <ul class="nav-links">
+    <li class="nav-item"><a href="index.html" class="nav-btn" data-page="index.html"><span class="label-main">Eden</span><span class="label-hover">Home</span></a></li>
+    <li class="nav-item"><a href="story.html" class="nav-btn" data-page="story.html"><span class="label-main">The Lore</span><span class="label-hover">Full Story</span></a></li>
+    <li class="nav-item"><a href="updates.html" class="nav-btn" data-page="updates.html"><span class="label-main">Scrolls</span><span class="label-hover">Updates</span></a></li>
+    <li class="nav-item"><a href="guide.html" class="nav-btn" data-page="guide.html"><span class="label-main">Journey</span><span class="label-hover">How to Join</span></a></li>
+    <li class="nav-item"><a href="press.html" class="nav-btn" data-page="press.html"><span class="label-main">PRESS</span><span class="label-hover">Watch</span></a></li>
+    <li class="nav-item social-wrapper">
+      <button class="social-toggle">Realm <span class="arrow">▾</span></button>
+      <div class="social-scroll">
+        <a class="social-link" href="https://discord.gg/yf2Mn4Q7Px" target="_blank"><span class="social-icon">⚔</span> Discord</a>
+        <a class="social-link" href="https://youtube.com/" target="_blank"><span class="social-icon">▶</span> YouTube</a>
+        <a class="social-link" href="https://instagram.com/" target="_blank"><span class="social-icon">✦</span> Instagram</a>
+        <a class="social-link" href="https://facebook.com/" target="_blank"><span class="social-icon">❧</span> Facebook</a>
+        <a class="social-link" href="https://wa.me/" target="_blank"><span class="social-icon">☍</span> WhatsApp</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right"><button class="settings-btn" id="settings-btn">⚙</button></div>
+</nav>
+
+<div id="settings-panel">
+  <div class="settings-header">⚙ &nbsp; Realm Settings</div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="dark">Dark</button>
+      <button class="mode-btn" data-mode="normal">Normal</button>
+      <button class="mode-btn" data-mode="bright">Light</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Sound & Effects</div>
+    <div class="toggle-row"><span class="toggle-label">Background Music</span><label class="toggle-switch"><input type="checkbox" id="music-toggle"><span class="toggle-slider"></span></label></div>
+    <div class="toggle-row"><span class="toggle-label">Floating Particles</span><label class="toggle-switch"><input type="checkbox" id="particles-toggle" checked><span class="toggle-slider"></span></label></div>
+  </div>
+</div>
+
+<div class="page-header">
+  <p class="hero-eyebrow">From the Keeper's Desk</p>
+  <h1 class="hero-title" style="font-size:clamp(3rem,7vw,6rem);">Dev Scrolls</h1>
+  <div class="ornate-divider" style="opacity:1;"><div class="line"></div><span class="gem">⚜</span><div class="line"></div></div>
+  <p style="font-family:var(--font-body);font-style:italic;color:var(--text-muted);font-size:0.95rem;max-width:500px;text-align:center;">
+    Dispatches from the realm builders — updates, announcements, and news from within the walls of Eldoria.
+  </p>
+</div>
+
+<section class="section">
+  <div class="section-inner" style="max-width:860px;">
+
+    <!-- PINNED -->
+    <div style="margin-bottom:8px;" class="reveal">
+      <div class="section-label">Pinned Announcement</div>
+    </div>
+
+    <div class="update-entry reveal" style="border-left-color:var(--gold);background:rgba(200,168,75,0.04);">
+      <div class="update-date">📌 &nbsp; Pinned — Always Current</div>
+      <div class="update-title">Welcome to Eldoria — Server Status & What to Expect</div>
+      <div class="update-body">
+        The server is currently in active development. The world is being built, NPCs are being voiced, and the main story arc is being placed piece by piece. Early players who join now will be among the first to experience the story as it unfolds in real time. Thank you for your patience and your passion — this is being built with nothing but love for the craft.
+        <br><br>
+        <strong style="color:var(--gold);">Current Phase:</strong> Early World Development &nbsp;·&nbsp;
+        <strong style="color:var(--gold);">Server IP:</strong> play.eldoria.net &nbsp;·&nbsp;
+        <strong style="color:var(--gold);">Version:</strong> 1.20.x
+      </div>
+    </div>
+
+    <div style="margin-top:50px;margin-bottom:8px;" class="reveal">
+      <div class="section-label">Recent Dispatches</div>
+    </div>
+
+    <div class="updates-list">
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume VII</div>
+        <div class="update-title">The Egyptian Region — Foundations Laid</div>
+        <div class="update-body">
+          The first ancient civilization zone has been placed in the world. The desert kingdom is taking shape — pyramids, sand-worn temples, and the first hidden chamber containing a key fragment are now accessible. Quests from the local NPCs will arrive in the next build. Cultural music for this region has been composed and is being mixed.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume VI</div>
+        <div class="update-title">Freya's Voice — Casting Complete</div>
+        <div class="update-body">
+          We have completed voice casting for Freya, the player's personal guide. Her lines for the first 3 chapters of the main story have been recorded and will be integrated into the next server build. The world narrator (deep male voice) has also completed his first recording session. Expect both voices to be live very soon.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume V</div>
+        <div class="update-title">Clan System Goes Live — Bloodcrest, Nighthowl, Emberwing</div>
+        <div class="update-body">
+          The three-clan political system is now active on the server. Each clan has an admin-controlled leader who will push the story forward. Clan bases have been constructed. PvP zones outside the main bases are now enabled. Clan quests are being written and will be released in batches. Remember: choosing your alliance carefully could determine your survival.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume IV</div>
+        <div class="update-title">Custom Mob Pack #1 Released — 38 New Creatures</div>
+        <div class="update-body">
+          The first custom mob pack is live. 38 unique creatures have been added to the world, each with custom 3D textures, special attack mechanics, and lore-appropriate names. Boss variants of five of these creatures have also been placed in the world — each with a chance to drop rare key fragments or unique gear. More packs are in development.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume III</div>
+        <div class="update-title">Random World Events — Now Active</div>
+        <div class="update-body">
+          Random events are now firing in the world: Death Rain, Acid Rain, Meteor Showers, and climate disasters have all been activated. Some events are purely atmospheric; others open underground passages or spawn rare encounters. The radio system (/music) is also now working — tune in during events for reactive ambient sound.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume II</div>
+        <div class="update-title">The Spawn Area — Complete</div>
+        <div class="update-body">
+          The spawn area is fully constructed. The cinematic introduction sequence plays automatically for new players. The starting gear set has been finalized. The teleportation NPC and the introductory Quest Board are in place. New players will now experience the intended first ten minutes of Eldoria's story from the moment they log in.
+        </div>
+      </div>
+
+      <div class="update-entry reveal">
+        <div class="update-date">Update · Volume I</div>
+        <div class="update-title">Eldoria Opens Its Gates</div>
+        <div class="update-body">
+          The server is live. The world is enormous, and still unfinished — but the bones are there. The main story path exists. The first quests have been placed. And somewhere out in the dark, six of the twelve keys are already hidden. Welcome to Eldoria. Try not to die on your first night.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:50px;" class="reveal">
+      <p style="font-family:var(--font-body);font-style:italic;font-size:0.9rem;color:var(--text-muted);margin-bottom:20px;">More scrolls will be added as the realm grows. Check back often.</p>
+      <a href="https://discord.gg/yf2Mn4Q7Px" target="_blank" class="btn-secondary">Join Discord for Live Updates ❯</a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Eldoria</div>
+  <p class="footer-tagline">"Once a kingdom of light. Now a story waiting to be written."</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="story.html">The Lore</a>
+    <a href="guide.html">Join</a>
+    <a href="updates.html">Updates</a>
+  </div>
+  <div class="footer-copy">© Eldoria — All rights reserved</div>
+</footer>
+
+<div id="audio-indicator" class="muted">
+  <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+  <span class="audio-label">Music Off</span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

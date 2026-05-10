@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lore of Eldoria — The Full Legend</title>
+<link rel="icon" href="eldoria-icon.jpg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="particles-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.4;"></canvas>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="eldoria-icon.jpg" alt="Eldoria">
+  </a>
+  <ul class="nav-links">
+    <li class="nav-item">
+      <a href="index.html" class="nav-btn" data-page="index.html">
+        <span class="label-main">Eden</span>
+        <span class="label-hover"><img src="img-tag-flame2.gif" height="100" width="100"></span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="story.html" class="nav-btn" data-page="story.html">
+        <span class="label-main">The Lore</span>
+        <span class="label-hover">Full Story</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="updates.html" class="nav-btn" data-page="updates.html">
+        <span class="label-main">Scrolls</span>
+        <span class="label-hover">Updates</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="guide.html" class="nav-btn" data-page="guide.html">
+        <span class="label-main">Journey</span>
+        <span class="label-hover">How to Join</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="press.html" class="nav-btn" data-page="press.html">
+        <span class="label-main">PRESS</span>
+        <span class="label-hover">Watch</span>
+      </a>
+    </li>
+    <li class="nav-item social-wrapper">
+      <button class="social-toggle">Realm <span class="arrow">▾</span></button>
+      <div class="social-scroll">
+        <a class="social-link" href="https://discord.gg/yf2Mn4Q7Px" target="_blank"><span class="social-icon"><img src="img-tag-discord.png" height="20" width="20"></span> Discord</a>
+        <a class="social-link" href="https://youtube.com/" target="_blank"><span class="social-icon"><img src="img-tag-youtube.png" height="20" width="20"></span> YouTube</a>
+        <a class="social-link" href="https://instagram.com/" target="_blank"><span class="social-icon"><img src="img-tag-instagram.png" height="20" width="20"></span> Instagram</a>
+        <a class="social-link" href="https://facebook.com/" target="_blank"><span class="social-icon"><img src="img-tag-facebook.png" height="20" width="20"></span> Facebook</a>
+        <a class="social-link" href="https://wa.me/" target="_blank"><span class="social-icon"><img src="img-tag-whatsapp.png" height="20" width="20"></span> WhatsApp</a>
+      </div>
+    </li>
+
+    <!-- INFORMATION dropdown (NEW) -->
+    <li class="nav-item info-wrapper">
+      <button class="info-toggle" id="infoToggle">More Info<span class="arrow">▾</span></button>
+      <div class="info-scroll" id="infoScroll">
+        <a class="info-link" href="eldoria_campfire_massges.html" ><span class="social-icon">✦</span> Explain</a>
+        <a class="info-link" href="Hello2.html"><span class="social-icon">❧</span> Hello 2</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right">
+    <button class="settings-btn" id="settings-btn" title="Settings">⚙</button>
+  </div>
+</nav>
+
+<!-- SETTINGS PANEL -->
+<div id="settings-panel">
+  <div class="settings-header">⚙ &nbsp; Realm Settings</div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="dark">Dark</button>
+      <button class="mode-btn" data-mode="normal">Normal</button>
+      <button class="mode-btn" data-mode="bright">Light</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Sound & Effects</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Background Music</span>
+      <label class="toggle-switch"><input type="checkbox" id="music-toggle"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Floating Particles</span>
+      <label class="toggle-switch"><input type="checkbox" id="particles-toggle" checked><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Server Info</div>
+    <div style="font-family:var(--font-heading);font-size:0.72rem;color:var(--text-muted);letter-spacing:0.08em;line-height:1.8;">
+      IP: <span style="color:var(--gold);">play.eldoria.net</span><br>
+      Version: <span style="color:var(--gold);">1.21.1 𓆩♱𓆪</span><br>
+      Status: <span style="color:var(--gold);">⟨ </span><span style="color:#ff0000;">OFFLINE</span><span style="color:var(--gold);"> ⟩ </span><span style="color:#ff7b00;">ᴄᴏᴍɪɴɢ ꜱᴏᴏɴ !</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <p class="hero-eyebrow">The Chronicles of Eldoria</p>
+  <h1 class="hero-title" style="font-size:clamp(3rem,8vw,7rem);">The Full Legend</h1>
+  <div class="ornate-divider" style="opacity:1;">
+    <div class="line"></div><span class="gem">⚜</span><div class="line"></div>
+  </div>
+  <p style="font-family:var(--font-body);font-style:italic;color:var(--text-muted);font-size:1rem;max-width:500px;text-align:center;">
+    As written by the Keeper of the Old Flame — let it be known to all who enter this world what came before.
+  </p>
+</div>
+
+<!-- CHAPTER I -->
+<section class="section">
+  <div class="section-inner" style="max-width:800px;">
+
+    <div class="section-label">Chapter I</div>
+    <h2 class="section-title reveal" style="text-align:left;">The Age of Light</h2>
+
+    <div class="story-panel reveal">
+      <span class="story-drop-cap">L</span>
+      <div class="story-text">
+        <p>ong, long ago, before the darkness had a name, there existed a kingdom unlike any other — <em>Eldoria</em>. Grass and flowers bloomed without season, rivers ran cold and clear, and the sky above was painted with shining blue and rainbow arcs that stretched from mountain to sea. Children played in fields that never knew drought. Elders spoke of a world so generous, so forgiving, that even the wolves lay down beside the deer.</p>
+        <p>All of it watched over by a single, true king — <strong>Maximus</strong>. Not merely a ruler, but a guardian. Brave, honest, and incorruptible. Under his vigil, the world endured blade shades and rust, days and seasons passing, yet war remained a word found only in old books. Peace was not an absence of conflict — it was something Maximus had built stone by stone, alliance by alliance, word by word.</p>
+        <p>The kingdoms around Eldoria — the Elves of the Silver Wood, the Knights of the Iron Road, the Romans of the Grand Arch, the Egyptians of the Sand Throne — all paid tribute to the realm not with gold, but with friendship. It was an age the historians would later call <em>The Age of Light</em>, though they would only give it that name once the light was gone.</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER II -->
+    <div style="margin-top:60px;" class="reveal">
+      <div class="section-label">Chapter II</div>
+      <h2 class="section-title" style="text-align:left;">The Veil Tears</h2>
+    </div>
+
+    <div class="story-panel reveal">
+      <div class="story-text">
+        <p>No one remembers the exact moment it happened. Some say it was a sound — a low tear, like the sky splitting at the seam. Others say the first sign was the flowers: they closed at midday and never opened again.</p>
+        <p>A hidden, unknown veil — stretched thin across the boundary between the living world and whatever lay beyond — had been torn open. What poured through was not an army. It was not fire or flood. It was <em>darkness itself</em>, slow and patient, seeping into stone and soil and the hearts of men who had been waiting, perhaps without knowing it, for permission to become something worse.</p>
+        <p>Once peaceful land became a place of decay. Villages that had stood for centuries turned grey overnight. The rivers that had run clear began to still. And the animals — the first to sense such things — disappeared entirely.</p>
+        <span class="dramatic">— Maximus rode out to meet it —</span>
+        <p>War after war, he held the line. With the armies of every allied kingdom marching beside him — Elves, Humans, Knights, Angels, Romans, Egyptians, and many more empire yet unnamed — the darkness was pushed back. Light became visible again. Victory seemed close enough to touch.</p>
+        <p>But darkness does not arrive from one side.</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER III -->
+    <div style="margin-top:60px;" class="reveal">
+      <div class="section-label">Chapter III</div>
+      <h2 class="section-title" style="text-align:left;">The Betrayal</h2>
+    </div>
+
+    <div class="story-panel reveal" style="border-color:var(--crimson-dark);">
+      <div class="story-text">
+        <p>As the war continued, something older and more insidious than darkness began to breed within the light: <em>greed</em>. Traitors were born inside the very banners that had held the line. Generals who had fought beside Maximus began to whisper in corners. Advisors who had sworn oaths began to weigh what the world would look like once the king was gone.</p>
+        <p>Many fell under the darkness — not through battle, but through choice. Including, at last, the kingdom of Eldoria itself.</p>
+        <p>A traitor within the king's own walls entered his chamber one quiet night. The sword did not ring. There was no battle cry. There was only silence — and then more silence.</p>
+        <span class="dramatic" style="color:var(--crimson-glow);">...Silent grazes as souls decay...</span>
+        <p>Clans and kingdoms shattered. What had once been a unified front splintered into alliances of mistrust, each blaming the other for the catastrophe. Without walls, without a watchful eye, the darkness and its monsters began to roam freely once more. The sky turned black with thick smoke from burning villages. Rivers ran red with the blood of innocents. The wolf could be seen slicing through the fallen. Crying could be heard from distances far away.</p>
+        <p>It was not the monsters who had ended the world. It had been the people who were supposed to protect it.</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER IV -->
+    <div style="margin-top:60px;" class="reveal">
+      <div class="section-label">Chapter IV</div>
+      <h2 class="section-title" style="text-align:left;">The Last Spark</h2>
+    </div>
+
+    <div class="story-panel reveal">
+      <div class="story-text">
+        <p>When all hope seemed buried beneath the ash and the silence, a small thing was found: a spark. Not a prophecy, not a chosen warrior — just a group of people too stubborn to accept that it was over. A small rebellion gathered despite every difference, despite every old grudge, and fought one last war against the evil darkness.</p>
+        <p>A great war happened. Many lives were lost. It was humanity's last hope.</p>
+        <p>The great war was not a full victory. But they managed something remarkable: the evil king — the architect behind the corruption, the one who had first whispered into the veil — was captured. Imprisoned, hidden somewhere no easy eye could find. The evil spirits were forced back into their pit. The monsters retreated.</p>
+        <span class="dramatic">Did we win?</span>
+        <p>With the presence of evil captured, the world began to correct itself. But the corruption already inside it — in the soil, in the rivers, in the fractured clans — that could not simply be imprisoned. The only way to truly end it was to destroy the evil spirit's main heart. Once and for all.</p>
+        <p style="font-family:var(--font-heading);font-size:1.1rem;color:var(--gold);letter-spacing:0.1em;text-align:center;margin-top:32px;">Can you do it?</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER V — THE PLAYER -->
+    <div style="margin-top:60px;" class="reveal">
+      <div class="section-label">Chapter V</div>
+      <h2 class="section-title" style="text-align:left;">Your Story Begins</h2>
+    </div>
+
+    <div class="story-panel reveal" style="border-color:var(--gold-dark);">
+      <div class="story-text">
+        <p>Into this broken world, you arrive. A traveler without a past — or perhaps one you have not yet remembered. The land is scarred. The clans are hostile. The darkness has not been defeated, only delayed.</p>
+        <p>You will be guided by <strong>Freya</strong>, a voice that found you when you first stepped into the world. She knows more than she tells. She will point you toward the three clans: <em>Bloodcrest</em>, <em>Nighthowl</em>, and <em>Emberwing</em> — or you may choose to trust none of them and walk as a Scavenger.</p>
+        <p>You will graze through mountains, killing powerful bosses. Solve puzzles carved by civilizations that were old when Eldoria was young. Defeat evil spirits with teams of warriors who were strangers last week. Collect the 12 keys, each one a fragment of the lock that seals the underground dark veil.</p>
+        <span class="dramatic">But is this the end?</span>
+        <p>Or is there something more? Something not yet discovered? Perhaps the real evil was never what it appeared to be. Perhaps the story does not end where the dragon falls.</p>
+        <p style="font-family:var(--font-heading);font-size:0.9rem;color:var(--silver);letter-spacing:0.2em;text-align:center;margin-top:24px;">THE REST OF THE STORY IS YOURS TO WRITE.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:50px;" class="reveal">
+      <a href="guide.html" class="btn-primary"><span>⚔ Begin the Journey</span></a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Eldoria</div>
+  <p class="footer-tagline">"Once a kingdom of light. Now a story waiting to be written."</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="story.html">The Lore</a>
+    <a href="guide.html">Join</a>
+    <a href="updates.html">Updates</a>
+  </div>
+  <div class="footer-copy">© Eldoria — All rights reserved</div>
+</footer>
+
+<div id="audio-indicator" class="muted">
+  <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+  <span class="audio-label">Music Off</span>
+</div>
+
+<script src="script.js"></script>
+
+
+
+
+<script>
+
+/* ═══════════════════════════════════════════════
+   NAVBAR — dropdown toggles
+═══════════════════════════════════════════════ */
+function setupDropdown(toggleId, scrollId){
+  const btn = document.getElementById(toggleId);
+  const menu = document.getElementById(scrollId);
+  if(!btn||!menu) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    const isOpen = menu.classList.contains('open');
+    // close all dropdowns first
+    document.querySelectorAll('.social-scroll, .info-scroll').forEach(m=>m.classList.remove('open'));
+    document.querySelectorAll('.social-toggle, .info-toggle').forEach(t=>t.classList.remove('open'));
+    if(!isOpen){ menu.classList.add('open'); btn.classList.add('open'); }
+  });
+}
+setupDropdown('realmToggle','realmScroll');
+setupDropdown('infoToggle','infoScroll');
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(){
+  document.querySelectorAll('.social-scroll, .info-scroll').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.social-toggle, .info-toggle').forEach(t=>t.classList.remove('open'));
+});
+document.getElementById('settings-panel').addEventListener('click', e=>e.stopPropagation());
+
+
+
+
+
+</script>
+</body>
+</html>
+
